@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Shopping Lists - RecipeApp{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Shopping Lists</h1>
+    <a href="{% url 'create_shopping_list' %}" class="btn btn-primary">Create New List</a>
+</div>
+
+{% if shopping_lists %}
+    <div class="list-container">
+        {% for list in shopping_lists %}
+            <div class="list-item">
+                <h3>{{ list.name }}</h3>
+                <p class="date">Created: {{ list.created_at|date:"M d, Y" }}</p>
+                <a href="{% url 'view_shopping_list' list.id %}" class="btn btn-small">View List</a>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>No shopping lists yet. <a href="{% url 'create_shopping_list' %}">Create one now!</a></p>
+{% endif %}
+{% endblock %}

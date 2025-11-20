@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ meal_plan.name }} - RecipeApp{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>{{ meal_plan.name }}</h1>
+    <a href="{% url 'add_meal_plan_item' meal_plan.id %}" class="btn btn-primary">Add Recipe</a>
+    <!-- Add shopping list generation button -->
+    <a href="{% url 'generate_shopping_list' meal_plan.id %}" class="btn btn-success">Generate Shopping List</a>
+</div>
+
+<!-- Add nutrition summary section -->
+<div style="background-color: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 4px;">
+    <h2>Nutrition Summary</h2>
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;">
+        <div>
+            <strong>Total Calories</strong>
+            <p>{{ total_calories }}</p>
+        </div>
+        <div>
+            <strong>Total Protein</strong>
+            <p>{{ total_protein|floatformat:1 }}g</p>
+        </div>
+        <div>
+            <strong>Total Fat</strong>
+            <p>{{ total_fat|floatformat:1 }}g</p>
+        </div>
+        <div>
+            <strong>Total Carbs</strong>
+            <p>{{ total_carbs|floatformat:1 }}g</p>
+        </div>
+    </div>
+</div>
+
+{% if items %}
+    <div class="meal-plan-container">
+        {% regroup items by meal_date as items_by_date %}
+        {% for date_group in items_by_date %}
+            <div class="meal-day">
+                <h2>{{ date_group.grouper|date:"l, F j, Y" }}</h2>
+                {% regroup date_group.list by meal_type as items_by_type %}
+                {% for type_group in items_by_type %}
+                    <div class="meal-type">
+                        <h3>{{ type_group.grouper|title }}</h3>
+                        {% for item in type_group.list %}
+                            <div class="meal-item">
+                                <h4>{{ item.recipe.title }}</h4>
+                                <p>{{ item.recipe.description|truncatewords:10 }}</p>
+                                <form method="post" action="{% url 'delete_meal_plan_item' item.id %}" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-small btn-danger" onclick="return confirm('Remove this item?')">Remove</button>
+                                </form>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>No meals planned yet. <a href="{% url 'add_meal_plan_item' meal_plan.id %}">Add a recipe!</a></p>
+{% endif %}
+
+<div class="page-actions">
+    <a href="{% url 'meal_plans' %}" class="btn btn-secondary">Back to Plans</a>
+</div>
+{% endblock %}

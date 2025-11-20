@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Recipe - RecipeApp{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h1>Add New Recipe</h1>
+    <form method="post" class="recipe-form">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.errors %}
+                    <div class="error">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Add Recipe</button>
+            <a href="{% url 'my_recipes' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

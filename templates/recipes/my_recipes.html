@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if is_favorites %}My Favorites{% else %}My Recipes{% endif %} - RecipeApp{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>{% if is_favorites %}❤️ My Favorite Recipes{% else %}My Recipes{% endif %}</h1>
+        {% if not is_favorites %}<p style="color: var(--gray-600); margin-top: 0.5rem;">Manage your personal recipe collection</p>{% endif %}
+    </div>
+    {% if not is_favorites %}<a href="{% url 'add_recipe' %}" class="btn btn-primary">+ Add New Recipe</a>{% endif %}
+</div>
+
+{% if not is_favorites %}
+<div class="filter-section">
+    <form method="get" class="filter-form">
+        <label for="dietary_type">Filter by dietary type:</label>
+        <select name="dietary_type" id="dietary_type" onchange="this.form.submit()">
+            <option value="">All Types</option>
+            {% for value, label in dietary_choices %}
+                <option value="{{ value }}" {% if current_filter == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </form>
+</div>
+{% endif %}
+
+{% if recipes %}
+    <div class="recipe-grid">
+        {% for recipe in recipes %}
+            <div class="recipe-card">
+                <div class="recipe-card-header">
+                    <h3>{{ recipe.title }}</h3>
+                    <!-- Added favorite toggle button to recipe cards -->
+                    {% if is_favorites %}
+                    <span class="favorite-indicator">❤️</span>
+                    {% endif %}
+                </div>
+                <p class="dietary-badge">{{ recipe.get_dietary_type_display }}</p>
+                <p class="recipe-description">{{ recipe.description|truncatewords:15 }}</p>
+                <div class="nutrition-info">
+                    <span>🔥 {{ recipe.calories }} cal</span>
+                    <span>💪 {{ recipe.protein }}g</span>
+                    <span>🌾 {{ recipe.fat }}g</span>
+                    <span>🍞 {{ recipe.carbs }}g</span>
+                </div>
+                <p class="shared-status">{% if recipe.is_shared %}🌍 Shared{% else %}🔒 Private{% endif %}</p>
+                <div class="action-buttons">
+                    <a href="{% url 'view_recipe' recipe.id %}" class="btn btn-small btn-primary">View</a>
+                    {% if not is_favorites %}
+                    <a href="{% url 'edit_recipe' recipe.id %}" class="btn btn-small btn-secondary">Edit</a>
+                    <form method="post" action="{% url 'delete_recipe' recipe.id %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-small btn-danger" onclick="return confirm('Delete this recipe?')">Delete</button>
+                    </form>
+                    {% else %}
+                    <form method="post" action="{% url 'toggle_favorite' recipe.id %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-small btn-danger">Remove from Favorites</button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">
+        <p>{% if is_favorites %}No favorite recipes yet. Start favoriting recipes to see them here!{% else %}No recipes yet. <a href="{% url 'add_recipe' %}">Create one now!</a>{% endif %}</p>
+    </div>
+{% endif %}
+{% endblock %}

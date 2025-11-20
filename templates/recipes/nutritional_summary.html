@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Nutritional Summary - Mealy{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-8">Nutritional Summary</h1>
+    
+    <div class="bg-white rounded-lg shadow p-6 mb-8">
+        <h2 class="text-xl font-bold mb-4">Your Recipes Average Nutrition</h2>
+        <p class="text-gray-600 mb-6">Based on {{ total_recipes }} recipe{{ total_recipes|pluralize }}</p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="p-4 bg-blue-50 rounded">
+                <p class="text-gray-600 text-sm">Average Calories</p>
+                <p class="text-3xl font-bold text-blue-600">{{ avg_calories }}</p>
+            </div>
+            <div class="p-4 bg-red-50 rounded">
+                <p class="text-gray-600 text-sm">Average Protein</p>
+                <p class="text-3xl font-bold text-red-600">{{ avg_protein }}g</p>
+            </div>
+            <div class="p-4 bg-yellow-50 rounded">
+                <p class="text-gray-600 text-sm">Average Fat</p>
+                <p class="text-3xl font-bold text-yellow-600">{{ avg_fat }}g</p>
+            </div>
+            <div class="p-4 bg-green-50 rounded">
+                <p class="text-gray-600 text-sm">Average Carbs</p>
+                <p class="text-3xl font-bold text-green-600">{{ avg_carbs }}g</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-xl font-bold mb-4">Dietary Breakdown</h2>
+        <div class="space-y-2">
+            {% for label, count in dietary_stats.items %}
+            <div class="flex items-center">
+                <span class="text-gray-700 w-32">{{ label }}:</span>
+                <div class="flex-1 bg-gray-200 rounded-full h-6 relative">
+                    <div class="bg-blue-500 h-6 rounded-full" style="width: {% widthratio count total_recipes 100 %}%"></div>
+                </div>
+                <span class="ml-4 text-gray-600">{{ count }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

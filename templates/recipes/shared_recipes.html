@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Browse Recipes - RecipeApp{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Browse Shared Recipes</h1>
+</div>
+
+<div class="filter-section">
+    <form method="get" class="filter-form">
+        <label for="dietary_type">Filter by dietary type:</label>
+        <select name="dietary_type" id="dietary_type" onchange="this.form.submit()">
+            <option value="">All Types</option>
+            {% for value, label in dietary_choices %}
+                <option value="{{ value }}" {% if current_filter == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </form>
+</div>
+
+{% if recipes %}
+    <div class="recipe-grid">
+        {% for recipe in recipes %}
+            <div class="recipe-card">
+                <h3>{{ recipe.title }}</h3>
+                <p class="author">by {{ recipe.user.username }}</p>
+                <p class="dietary-badge">{{ recipe.get_dietary_type_display }}</p>
+                <p class="recipe-description">{{ recipe.description|truncatewords:15 }}</p>
+                <div class="nutrition-info">
+                    <span>{{ recipe.calories }} cal</span>
+                    <span>P: {{ recipe.protein }}g</span>
+                    <span>F: {{ recipe.fat }}g</span>
+                    <span>C: {{ recipe.carbs }}g</span>
+                </div>
+                <a href="{% url 'view_recipe' recipe.id %}" class="btn btn-small">View Recipe</a>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>No shared recipes found.</p>
+{% endif %}
+{% endblock %}

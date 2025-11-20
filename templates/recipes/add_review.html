@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Review - Mealy{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 max-w-2xl">
+    <h1 class="text-3xl font-bold mb-2">{{ recipe.title }}</h1>
+    <p class="text-gray-600 mb-8">Review this recipe</p>
+    
+    <form method="post" class="bg-white rounded-lg shadow p-6">
+        {% csrf_token %}
+        
+        <div class="mb-6">
+            <label for="rating" class="block text-gray-700 font-medium mb-2">Rating (1-5)</label>
+            <input type="range" name="rating" id="rating" min="1" max="5" value="{% if existing_review %}{{ existing_review.rating }}{% else %}3{% endif %}" class="w-full" oninput="updateRating(this.value)">
+            <span id="ratingValue" class="text-lg font-bold mt-2">{% if existing_review %}{{ existing_review.rating }}{% else %}3{% endif %} stars</span>
+        </div>
+        
+        <div class="mb-6">
+            <label for="comment" class="block text-gray-700 font-medium mb-2">Your Comment</label>
+            <textarea name="comment" id="comment" rows="5" class="form-textarea w-full" placeholder="Share your thoughts about this recipe...">{% if existing_review %}{{ existing_review.comment }}{% endif %}</textarea>
+        </div>
+        
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Save Review</button>
+        <a href="{% url 'view_recipe' recipe.id %}" class="ml-2 text-gray-600 hover:text-gray-800">Cancel</a>
+    </form>
+</div>
+
+<script>
+function updateRating(value) {
+    document.getElementById('ratingValue').textContent = value + ' stars';
+}
+</script>
+{% endblock %}

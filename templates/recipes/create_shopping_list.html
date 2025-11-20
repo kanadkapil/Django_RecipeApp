@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Shopping List - RecipeApp{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h1>Create New Shopping List</h1>
+    <form method="post" class="form">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.errors %}
+                    <div class="error">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Create List</button>
+            <a href="{% url 'shopping_lists' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

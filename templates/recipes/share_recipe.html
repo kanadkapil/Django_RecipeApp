@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Share {{ recipe.title }}{% endblock %}
+
+{% block content %}
+<div class="recipe-detail" style="max-width: 600px;">
+    <h1>Share {{ recipe.title }}</h1>
+    
+    <div class="recipe-section" style="margin-top: 2rem;">
+        <h2>Copy Link</h2>
+        <div style="display: flex; gap: 1rem; align-items: center;">
+            <input type="text" id="shareLink" value="{{ share_url }}" readonly style="flex: 1; padding: 0.75rem; border: 2px solid var(--gray-300); border-radius: 8px;">
+            <button onclick="copyToClipboard()" class="btn btn-primary">📋 Copy</button>
+        </div>
+    </div>
+
+    <div class="recipe-section">
+        <h2>Share On</h2>
+        <div class="action-buttons">
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{ encoded_url }}" target="_blank" class="btn btn-secondary">📘 Facebook</a>
+            <a href="https://twitter.com/intent/tweet?text={{ encoded_text }}&url={{ encoded_url }}" target="_blank" class="btn btn-secondary">𝕏 Twitter</a>
+            <a href="https://wa.me/?text={{ encoded_text }}%20{{ encoded_url }}" target="_blank" class="btn btn-secondary">💬 WhatsApp</a>
+            <a href="mailto:?subject=Check out this recipe: {{ recipe.title }}&body={{ share_text }}%0A{{ share_url }}" class="btn btn-secondary">📧 Email</a>
+        </div>
+    </div>
+
+    <div style="margin-top: 2rem;">
+        <a href="{% url 'view_recipe' recipe.id %}" class="btn btn-primary">← Back to Recipe</a>
+    </div>
+</div>
+
+<script>
+function copyToClipboard() {
+    const link = document.getElementById('shareLink');
+    link.select();
+    document.execCommand('copy');
+    alert('Recipe link copied to clipboard!');
+}
+</script>
+{% endblock %}

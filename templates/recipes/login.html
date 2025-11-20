@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - RecipeApp{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <h2>Login</h2>
+    <form method="post" class="auth-form">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+            <div class="error">{{ form.non_field_errors }}</div>
+        {% endif %}
+        {% for field in form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.errors %}
+                    <div class="error">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+    <p>Don't have an account? <a href="{% url 'register' %}">Register here</a></p>
+</div>
+{% endblock %}

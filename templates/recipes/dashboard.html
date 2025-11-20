@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Mealy{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-8">Dashboard</h1>
+    
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-gray-500 text-sm font-medium">My Recipes</h3>
+            <p class="text-3xl font-bold">{{ total_recipes }}</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-gray-500 text-sm font-medium">Favorites</h3>
+            <p class="text-3xl font-bold">{{ favorite_count }}</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-gray-500 text-sm font-medium">Meal Plans</h3>
+            <p class="text-3xl font-bold">{{ total_meal_plans }}</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-gray-500 text-sm font-medium">Shopping Lists</h3>
+            <p class="text-3xl font-bold">{{ recent_shopping_lists|length }}</p>
+        </div>
+    </div>
+    
+    <!-- Nutrition Overview -->
+    {% if nutrition_stats.calories > 0 %}
+    <div class="bg-white rounded-lg shadow p-6 mb-8">
+        <h2 class="text-xl font-bold mb-4">Nutrition Overview</h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="p-4 bg-blue-50 rounded">
+                <p class="text-gray-600 text-sm">Calories</p>
+                <p class="text-2xl font-bold text-blue-600">{{ nutrition_stats.calories }}</p>
+            </div>
+            <div class="p-4 bg-red-50 rounded">
+                <p class="text-gray-600 text-sm">Protein (g)</p>
+                <p class="text-2xl font-bold text-red-600">{{ nutrition_stats.protein|floatformat:1 }}</p>
+            </div>
+            <div class="p-4 bg-yellow-50 rounded">
+                <p class="text-gray-600 text-sm">Fat (g)</p>
+                <p class="text-2xl font-bold text-yellow-600">{{ nutrition_stats.fat|floatformat:1 }}</p>
+            </div>
+            <div class="p-4 bg-green-50 rounded">
+                <p class="text-gray-600 text-sm">Carbs (g)</p>
+                <p class="text-2xl font-bold text-green-600">{{ nutrition_stats.carbs|floatformat:1 }}</p>
+            </div>
+        </div>
+        <div class="mt-4">
+            <a href="{% url 'nutritional_summary' %}" class="text-blue-600 hover:underline">View detailed nutrition summary →</a>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Dietary Preferences -->
+    {% if dietary_preference %}
+    <div class="bg-white rounded-lg shadow p-6 mb-8">
+        <h2 class="text-xl font-bold mb-4">Your Dietary Preferences</h2>
+        <div class="flex flex-wrap gap-2">
+            {% if dietary_preference.vegan %}<span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">Vegan</span>{% endif %}
+            {% if dietary_preference.vegetarian %}<span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">Vegetarian</span>{% endif %}
+            {% if dietary_preference.gluten_free %}<span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">Gluten-Free</span>{% endif %}
+            {% if dietary_preference.nut_allergy %}<span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm">Nut Allergy</span>{% endif %}
+            {% if dietary_preference.dairy_free %}<span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">Dairy-Free</span>{% endif %}
+            {% if dietary_preference.low_carb %}<span class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm">Low-Carb</span>{% endif %}
+        </div>
+        <a href="{% url 'manage_dietary_preferences' %}" class="text-blue-600 hover:underline mt-4 inline-block">Update preferences →</a>
+    </div>
+    {% endif %}
+    
+    <!-- Recent Meal Plans -->
+    <div class="bg-white rounded-lg shadow p-6 mb-8">
+        <h2 class="text-xl font-bold mb-4">Recent Meal Plans</h2>
+        {% if recent_meal_plans %}
+        <ul class="space-y-2">
+            {% for plan in recent_meal_plans %}
+            <li><a href="{% url 'view_meal_plan' plan.id %}" class="text-blue-600 hover:underline">{{ plan.name }}</a></li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-gray-500">No meal plans yet. <a href="{% url 'create_meal_plan' %}" class="text-blue-600 hover:underline">Create one</a></p>
+        {% endif %}
+    </div>
+    
+    <!-- Recent Shopping Lists -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-xl font-bold mb-4">Recent Shopping Lists</h2>
+        {% if recent_shopping_lists %}
+        <ul class="space-y-2">
+            {% for list in recent_shopping_lists %}
+            <li><a href="{% url 'view_shopping_list' list.id %}" class="text-blue-600 hover:underline">{{ list.name }}</a></li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-gray-500">No shopping lists yet. <a href="{% url 'create_shopping_list' %}" class="text-blue-600 hover:underline">Create one</a></p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

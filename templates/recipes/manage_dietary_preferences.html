@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Dietary Preferences - Mealy{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 max-w-2xl">
+    <h1 class="text-3xl font-bold mb-8">Manage Dietary Preferences</h1>
+    
+    <form method="post" class="bg-white rounded-lg shadow p-6">
+        {% csrf_token %}
+        
+        <div class="space-y-4">
+            <div class="flex items-center">
+                <input type="checkbox" name="vegan" id="vegan" {% if dietary_preference.vegan %}checked{% endif %} class="form-checkbox">
+                <label for="vegan" class="ml-3">Vegan</label>
+            </div>
+            
+            <div class="flex items-center">
+                <input type="checkbox" name="vegetarian" id="vegetarian" {% if dietary_preference.vegetarian %}checked{% endif %} class="form-checkbox">
+                <label for="vegetarian" class="ml-3">Vegetarian</label>
+            </div>
+            
+            <div class="flex items-center">
+                <input type="checkbox" name="gluten_free" id="gluten_free" {% if dietary_preference.gluten_free %}checked{% endif %} class="form-checkbox">
+                <label for="gluten_free" class="ml-3">Gluten-Free</label>
+            </div>
+            
+            <div class="flex items-center">
+                <input type="checkbox" name="nut_allergy" id="nut_allergy" {% if dietary_preference.nut_allergy %}checked{% endif %} class="form-checkbox">
+                <label for="nut_allergy" class="ml-3">Nut Allergy</label>
+            </div>
+            
+            <div class="flex items-center">
+                <input type="checkbox" name="dairy_free" id="dairy_free" {% if dietary_preference.dairy_free %}checked{% endif %} class="form-checkbox">
+                <label for="dairy_free" class="ml-3">Dairy-Free</label>
+            </div>
+            
+            <div class="flex items-center">
+                <input type="checkbox" name="low_carb" id="low_carb" {% if dietary_preference.low_carb %}checked{% endif %} class="form-checkbox">
+                <label for="low_carb" class="ml-3">Low-Carb</label>
+            </div>
+            
+            <div>
+                <label for="custom_restrictions" class="block text-gray-700 font-medium mb-2">Custom Restrictions</label>
+                <textarea name="custom_restrictions" id="custom_restrictions" rows="4" class="form-textarea w-full" placeholder="Any other dietary restrictions...">{{ dietary_preference.custom_restrictions }}</textarea>
+            </div>
+        </div>
+        
+        <button type="submit" class="mt-6 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Save Preferences</button>
+    </form>
+</div>
+{% endblock %}

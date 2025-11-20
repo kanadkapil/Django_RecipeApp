@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Item to Shopping List - RecipeApp{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h1>Add Item to {{ shopping_list.name }}</h1>
+    <form method="post" class="form">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.errors %}
+                    <div class="error">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Add Item</button>
+            <a href="{% url 'view_shopping_list' shopping_list.id %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}RecipeApp{% endblock %}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{% url 'home' %}" class="logo">🍳 RecipeApp</a>
+            <ul class="nav-menu">
+                <li><a href="{% url 'home' %}">Home</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'my_recipes' %}">My Recipes</a></li>
+                    <li><a href="{% url 'favorite_recipes' %}">♥ Favorites</a></li>
+                    <li><a href="{% url 'meal_plans' %}">Meal Plans</a></li>
+                    <li><a href="{% url 'shopping_lists' %}">Shopping Lists</a></li>
+                    <li><a href="{% url 'shared_recipes' %}">Browse Recipes</a></li>
+                    <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <li><span class="username">{{ user.username }}</span></li>
+                    <li><a href="{% url 'logout' %}" class="btn-logout">Logout</a></li>
+                {% else %}
+                    <li><a href="{% url 'login' %}" class="btn-login">Login</a></li>
+                    <li><a href="{% url 'register' %}" class="btn-register">Register</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2025 Kanad Kapil - Discover Veg and non-veg Cuisine. All rights reserved.</p>
+    </footer>
+</body>
+</html>

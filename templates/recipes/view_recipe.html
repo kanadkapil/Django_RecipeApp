@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ recipe.title }} - RecipeApp{% endblock %}
+
+{% block content %}
+<div class="recipe-detail">
+    <div class="recipe-header">
+        <div>
+            <h1>{{ recipe.title }}</h1>
+            <p class="dietary-badge">{{ recipe.get_dietary_type_display }}</p>
+            {% if recipe.user != user %}
+                <p class="author">👨‍🍳 By {{ recipe.user.username }}</p>
+            {% endif %}
+        </div>
+        <!-- Enhanced favorite and share buttons with better styling -->
+        <div class="recipe-actions-top">
+            {% if user.is_authenticated %}
+            <form method="post" action="{% url 'toggle_favorite' recipe.id %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn-heart {% if is_favorite %}active{% endif %}" title="Add to favorites">
+                    {% if is_favorite %}❤️ Favorited{% else %}🤍 Add to Favorites{% endif %}
+                </button>
+            </form>
+            <!-- Share button with dropdown -->
+            <a href="{% url 'share_recipe' recipe.id %}" class="btn btn-secondary btn-share" title="Share this recipe">📤 Share Recipe</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="recipe-content">
+        <div class="recipe-section">
+            <h2>Description</h2>
+            <p>{{ recipe.description }}</p>
+        </div>
+
+        <div class="nutrition-section">
+            <h2>Nutrition Information (per serving)</h2>
+            <div class="nutrition-grid">
+                <div class="nutrition-item">
+                    <span class="label">Calories</span>
+                    <span class="value">{{ recipe.calories }}</span>
+                </div>
+                <div class="nutrition-item">
+                    <span class="label">Protein</span>
+                    <span class="value">{{ recipe.protein }}g</span>
+                </div>
+                <div class="nutrition-item">
+                    <span class="label">Fat</span>
+                    <span class="value">{{ recipe.fat }}g</span>
+                </div>
+                <div class="nutrition-item">
+                    <span class="label">Carbs</span>
+                    <span class="value">{{ recipe.carbs }}g</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="recipe-section">
+            <h2>Ingredients</h2>
+            <ul>
+                {% for ingredient in recipe.ingredients.split %}
+                    {% if ingredient %}
+                        <li>{{ ingredient }}</li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="recipe-section">
+            <h2>Instructions</h2>
+            <ol>
+                {% for instruction in recipe.instructions.split %}
+                    {% if instruction %}
+                        <li>{{ instruction }}</li>
+                    {% endif %}
+                {% endfor %}
+            </ol>
+        </div>
+
+        {% if recipe.is_shared or recipe.user == user %}
+        <div class="recipe-section">
+            <h2>Reviews & Rating</h2>
+            {% if avg_rating %}
+            <div style="margin-bottom: 1.5rem; padding: 1rem; background-color: var(--gray-100); border-radius: 8px;">
+                <strong>⭐ Average Rating: {{ avg_rating|floatformat:1 }}/5</strong>
+            </div>
+            {% endif %}
+            {% if user.is_authenticated and recipe.is_shared %}
+            <a href="{% url 'add_review' recipe.id %}" class="btn btn-primary">Add Your Review</a>
+            {% endif %}
+            
+            {% if reviews %}
+            <div style="margin-top: 1.5rem;">
+                {% for review in reviews %}
+                <div style="border-left: 3px solid var(--secondary-color); padding: 1rem; margin: 1rem 0; background-color: var(--gray-50); border-radius: 6px;">
+                    <strong>{{ review.reviewer.username }}</strong> <span style="font-size: 1.1rem;">{{ review.rating }}⭐</span>
+                    <p style="margin-top: 0.5rem; color: var(--gray-600);">{{ review.comment }}</p>
+                    <small style="color: var(--gray-600);">{{ review.created_at|date:"M d, Y" }}</small>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p>No reviews yet. {% if user.is_authenticated and recipe.is_shared %}<a href="{% url 'add_review' recipe.id %}">Be the first to review</a>{% endif %}</p>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    {% if user == recipe.user %}
+        <div class="recipe-actions">
+            <a href="{% url 'edit_recipe' recipe.id %}" class="btn btn-secondary">✏️ Edit</a>
+            <form method="post" action="{% url 'delete_recipe' recipe.id %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger" onclick="return confirm('Delete this recipe?')">🗑️ Delete</button>
+            </form>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - RecipeApp{% endblock %}
+
+{% block content %}
+<div class="home-hero">
+    <h1>Welcome to RecipeApp</h1>
+    <p>Discover authentic Indian & Bihari recipes, plan meals, and organize shopping lists</p>
+    {% if not user.is_authenticated %}
+        <div class="hero-buttons">
+            <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+            <a href="{% url 'register' %}" class="btn btn-secondary">Register</a>
+        </div>
+    {% else %}
+        <div class="hero-buttons">
+            <a href="{% url 'add_recipe' %}" class="btn btn-primary">Add Recipe</a>
+            <a href="{% url 'my_recipes' %}" class="btn btn-secondary">My Recipes</a>
+        </div>
+    {% endif %}
+</div>
+
+<div class="shared-recipes-section">
+    <h2>Featured Shared Recipes</h2>
+    {% if shared_recipes %}
+        <div class="recipe-grid">
+            {% for recipe in shared_recipes %}
+                <div class="recipe-card">
+                    <div class="author">By {{ recipe.user.username }}</div>
+                    <h3>{{ recipe.title }}</h3>
+                    <p class="dietary-badge">{{ recipe.get_dietary_type_display }}</p>
+                    <p class="recipe-description">{{ recipe.description|truncatewords:20 }}</p>
+                    <div class="nutrition-info">
+                        <span>⚡ {{ recipe.calories }} cal</span>
+                        <span>💪 P: {{ recipe.protein }}g</span>
+                        <span>🧈 F: {{ recipe.fat }}g</span>
+                        <span>🌾 C: {{ recipe.carbs }}g</span>
+                    </div>
+                    <div class="recipe-footer">
+                        <a href="{% url 'view_recipe' recipe.id %}" class="btn btn-small btn-primary">View Recipe</a>
+                        {% if user.is_authenticated %}
+                        <button onclick="document.forms['favorite-form-{{ recipe.id }}'].submit();" class="favorite-btn {% if recipe.id in user_favorites %}favorited{% endif %}">♥</button>
+                        <form id="favorite-form-{{ recipe.id }}" method="post" action="{% url 'toggle_favorite' recipe.id %}" style="display:none;">
+                            {% csrf_token %}
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No shared recipes yet. Be the first to share!</p>
+    {% endif %}
+</div>
+{% endblock %}

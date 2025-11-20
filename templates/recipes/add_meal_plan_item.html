@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Recipe to Meal Plan - RecipeApp{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h1>Add Recipe to {{ meal_plan.name }}</h1>
+    <form method="post" class="form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="recipe_id">Select Recipe:</label>
+            <select name="recipe_id" id="recipe_id" required>
+                <option value="">-- Choose a recipe --</option>
+                {% for recipe in recipes %}
+                    <option value="{{ recipe.id }}">{{ recipe.title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="meal_date">Meal Date:</label>
+            <input type="date" name="meal_date" id="meal_date" required>
+        </div>
+        <div class="form-group">
+            <label for="meal_type">Meal Type:</label>
+            <select name="meal_type" id="meal_type" required>
+                <option value="">-- Choose meal type --</option>
+                {% for value, label in meal_type_choices %}
+                    <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Add to Plan</button>
+            <a href="{% url 'view_meal_plan' meal_plan.id %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
